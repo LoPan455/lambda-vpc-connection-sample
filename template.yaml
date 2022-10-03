@@ -27,7 +27,9 @@ Resources:
           AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
           OTEL_SERVICE_NAME: hello-requests-apm
           OTEL_RESOURCE_ATTRIBUTES: deployment.environment=lambda-devlab
-          OTEL_EXPORTER_OTLP_ENDPOINT: http://10.0.1.220:4317
+          OTEL_EXPORTER_OTLP_ENDPOINT: !Sub
+            - 'http://${OtelCollectorPrivateDnsName}:4317'
+            - OtelCollectorPrivateDnsName: !GetAtt OtelCollectorEc2.PrivateDnsName
           OTEL_LOG_LEVEL: DEBUG
       VpcConfig:
         SecurityGroupIds:
@@ -125,6 +127,11 @@ Resources:
       RouteTableId: !Ref 'PrivateSubnet1ARouteTable'
       DestinationCidrBlock: '0.0.0.0/0'
       NatGatewayId: !Ref 'NATGateway1'
+  PrivateSubnetToPublicSubnetRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref 'PrivateSubnet1ARouteTable'
+      DestinationCidrBlock: '10.0.1.0/24'
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:

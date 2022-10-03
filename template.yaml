@@ -21,6 +21,14 @@ Resources:
         - x86_64
       Layers:
         - arn:aws:lambda:us-east-1:770693421928:layer:Klayers-p39-requests:8
+        - arn:aws:lambda:us-east-1:254067382080:layer:splunk-apm:62
+      Environment:
+        Variables:
+          AWS_LAMBDA_EXEC_WRAPPER: /opt/otel-instrument
+          OTEL_SERVICE_NAME: hello-requests-apm
+          OTEL_RESOURCE_ATTRIBUTES: deployment.environment=lambda-devlab
+          OTEL_EXPORTER_OTLP_ENDPOINT: http://10.0.1.220:4317
+          OTEL_LOG_LEVEL: DEBUG
       VpcConfig:
         SecurityGroupIds:
           - !GetAtt VPC.DefaultSecurityGroup
@@ -42,6 +50,26 @@ Resources:
       Tags:
         - Key: Name
           Value: !Ref 'AWS::StackName'
+  InboundRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !GetAtt VPC.DefaultSecurityGroup
+      CidrIp: '0.0.0.0/0'
+      IpProtocol: tcp
+      FromPort: 0
+      ToPort: 65535
+  OtelCollectorEc2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-026b57f3c383c2eec
+      KeyName: 'tj-devlab-ec2-key'
+      SubnetId: !GetAtt PublicSubnet1.SubnetId
+      SecurityGroupIds:
+        - !GetAtt VPC.DefaultSecurityGroup
+      Tags:
+        - Key: Name
+          Value: OpenTelemetry-Collector
+
   PublicSubnet1:
     Type: 'AWS::EC2::Subnet'
     Properties:

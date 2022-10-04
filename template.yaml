@@ -63,8 +63,10 @@ Resources:
   OtelCollectorEc2:
     Type: AWS::EC2::Instance
     Properties:
+      AvailabilityZone: us-east-1b
+      InstanceType: 't2.micro'
       ImageId: ami-026b57f3c383c2eec
-      KeyName: 'tj-devlab-ec2-key'
+      KeyName: 'tjohander-splunk-key-pair'
       SubnetId: !GetAtt PublicSubnet1.SubnetId
       SecurityGroupIds:
         - !GetAtt VPC.DefaultSecurityGroup
@@ -76,7 +78,7 @@ Resources:
     Type: 'AWS::EC2::Subnet'
     Properties:
       VpcId: !Ref VPC
-      AvailabilityZone: us-east-1a
+      AvailabilityZone: us-east-1b
       CidrBlock: '10.0.1.0/24'
       MapPublicIpOnLaunch: true
       Tags:
@@ -108,35 +110,30 @@ Resources:
     Properties:
       VpcId: !Ref 'VPC'
       CidrBlock: '10.0.192.0/21'
-      AvailabilityZone: us-east-1a
+      AvailabilityZone: us-east-1b
       Tags:
         - Key: Name
           Value: Private subnet 1
-  PrivateSubnet1ARouteTable:
+  PrivateSubnetRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref 'VPC'
       Tags:
         - Key: Name
-          Value: Private subnet 1A
+          Value: Private Subnet
         - Key: Network
           Value: Private
-  PrivateSubnet1ARoute:
+  PrivateSubnetRoute:
     Type: AWS::EC2::Route
     Properties:
-      RouteTableId: !Ref 'PrivateSubnet1ARouteTable'
+      RouteTableId: !Ref 'PrivateSubnetRouteTable'
       DestinationCidrBlock: '0.0.0.0/0'
       NatGatewayId: !Ref 'NATGateway1'
-  PrivateSubnetToPublicSubnetRoute:
-    Type: AWS::EC2::Route
-    Properties:
-      RouteTableId: !Ref 'PrivateSubnet1ARouteTable'
-      DestinationCidrBlock: '10.0.1.0/24'
   PrivateSubnet1RouteTableAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       SubnetId: !Ref 'PrivateSubnet1'
-      RouteTableId: !Ref 'PrivateSubnet1ARouteTable'
+      RouteTableId: !Ref 'PrivateSubnetRouteTable'
   VPCGatewayAttachment:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:

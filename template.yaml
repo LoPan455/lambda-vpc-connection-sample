@@ -28,9 +28,11 @@ Resources:
           OTEL_SERVICE_NAME: hello-requests-apm
           OTEL_RESOURCE_ATTRIBUTES: deployment.environment=lambda-devlab
           OTEL_EXPORTER_OTLP_ENDPOINT: !Sub
-            - 'http://${OtelCollectorPrivateDnsName}:4317'
+            - 'http://${OtelCollectorPrivateDnsName}:4318'
             - OtelCollectorPrivateDnsName: !GetAtt OtelCollectorEc2.PrivateDnsName
           OTEL_LOG_LEVEL: DEBUG
+          OTEL_TRACES_EXPORTER: otlp_proto_http
+          SPLUNK_ACCESS_TOKEN: accesstoken
       VpcConfig:
         SecurityGroupIds:
           - !GetAtt VPC.DefaultSecurityGroup

@@ -3,7 +3,8 @@ Transform: AWS::Serverless-2016-10-31
 Description: >
   Sample SAM Template for an OpenTelemetry-instrumented Python Lambda.  
   The function simply calls an external URL with the `requests` library.  
-  The additional resources in this template are intended as a sample implementation 
+  The additional resources in this template are intended as an example implementation of sending Lambda telemetry to
+  a VPC-Connected Otel Gateway.
 
 Parameters:
   EC2Ami:
@@ -18,7 +19,7 @@ Parameters:
     Type: String
     Description: The Availability Zone to use for the Otel Collector Gateway Instance Host
     Default: 'us-east-1b'
-  EC2AccessKeyName:
+  EC2KeyPairName:
     Type: String
     Description: The name of the SSH key authorized to access the EC2 Instance
   SplunkAccessToken:
@@ -90,7 +91,7 @@ Resources:
       AvailabilityZone: !Ref EC2AvailabilityZone
       InstanceType: !Ref EC2InstanceType
       ImageId: !Ref EC2Ami
-      KeyName: !Ref EC2AccessKeyName
+      KeyName: !Ref EC2KeyPairName
       SubnetId: !GetAtt PublicSubnet1.SubnetId
       SecurityGroupIds:
         - !GetAtt VPC.DefaultSecurityGroup

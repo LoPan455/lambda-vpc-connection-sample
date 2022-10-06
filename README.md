@@ -2,7 +2,7 @@
 This project is intended as an example implementation of an Otel-instrumented Python Lambda using the [AWS Serverless Application Model (SAM)](https://aws.amazon.com/serverless/sam/).
 The additional AWS Resources included in this template support the Splunk-recommended best practice of sending Lambda telemetry to an OpenTelemetry Collector Gateway.
 
-For additional information about the AWS SAM framework please refer to the original README file generated with this sample's inital call to `sam init`. 
+For additional information about the AWS SAM framework please refer to the [original README file](./ORIGINAL_README.md) generated with this sample's inital call to `sam init`. 
 
 # Pre-Requisites
 1. Python 3.9 set as the active Python interpreter on your local machine
